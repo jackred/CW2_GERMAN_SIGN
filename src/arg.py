@@ -59,8 +59,7 @@ def contrast_arg(c):
     else:
         msg = 'No enough arg provided'
         raise argparse.ArgumentTypeError(msg)
-
-
+    
 def parse_args(name):
     argp = argparse.ArgumentParser(name)
     argp.add_argument('-col', dest='columns', type=int, nargs='+',
@@ -115,4 +114,9 @@ def preprocess_args():
                       help='name of the file (without extension)')
     argp.add_argument('-m', dest='mean', default=False, action='store_true',
                       help='create files/images using the mean of the images')
+    return argp.parse_args()
+
+def rForest_args():
+    argp = parse_args('sk_learn random tree')
+    # argp.add_argument( ) ## Check le man
     return argp.parse_args()
