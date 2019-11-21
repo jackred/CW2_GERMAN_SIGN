@@ -1,7 +1,9 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-*$py.class
+*$py.classs
+.idea
+src/NEAT/*.txt
 
 # C extensions
 *.so
@@ -102,3 +104,16 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# emacs
+*~
+*#
+
+# vim
+*.swp
+
+# data
+data
+test
+# img
+*.ppm
