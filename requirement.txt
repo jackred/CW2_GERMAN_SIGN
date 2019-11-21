@@ -1,4 +1,5 @@
 cycler==0.10.0
+Cython==0.29.14
 decorator==4.4.1
 imageio==2.6.1
 javabridge==1.0.18
