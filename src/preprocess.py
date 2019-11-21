@@ -7,7 +7,6 @@
 # author: JackRed <jackred@tuta.io>
 
 from sklearn.model_selection import train_test_split
-import cv2
 import numpy as np
 from sklearn.cluster import KMeans
 from skimage.exposure import match_histograms, equalize_hist
@@ -51,16 +50,10 @@ def pooling_images(data, l):
     return np.array([pooling(i, (l, l)) for i in data])
 
 
-def new_resize_img(row, d):
+def resize_img(row, d):
     dim = int(len(row) ** (1/2))
     img = row.reshape(dim, dim)
     return resize(img, d).flatten()
-
-
-def resize_img(row, d):
-    dim = int(len(row) ** (1/2))
-    img = row.reshape(dim, dim, 1)
-    return cv2.resize(img, d).flatten()
 
 
 def resize_img_square(row, l):
