@@ -16,10 +16,10 @@ import preprocess
 def main():
     args = arg.preprocess_args()
     rand = 0
-    data, _ = helper.pre_processed_data(args, rand, dry=False)
+    data, _ = helper.pre_processed_data_all(args, rand, dry=False)
     if args.mean:
         rand = random.randint(0, 9999999)
-        label, _ = helper.pre_processed_label(args, rand, dry=False)
+        label, _ = helper.pre_processed_label_all(args, rand, dry=False)
         data = preprocess.mean_image(label, data)
     helper.create_images_from_rows((args.name or 'img'),
                                    data)

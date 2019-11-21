@@ -71,9 +71,15 @@ def parse_args(name):
                       help='split the data set. 0-1 for percentage, else int')
     #  argp.add_argument('-k', dest='kmeans', type=int)
     argp.add_argument('-d', dest='data',
-                      help='name of the data file. With extension')
+                      help='name of the data file. Without extension')
+    argp.add_argument('-t', dest='test', action='store_true', default=False,
+                      help='Use a data set for test')
+    argp.add_argument('-dt', dest='data_test',
+                      help='name of the test data file. Without extension')
     argp.add_argument('-l', dest='label',
                       help='name of the label file. Without extension')
+    argp.add_argument('-lt', dest='label_test',
+                      help='name of the test label file. Without extension')
     argp.add_argument('-f', dest='folder',
                       help='name of the folder containing data (and label)')
     argp.add_argument('-c', dest='contrast', type=contrast_arg,
