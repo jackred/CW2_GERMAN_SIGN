@@ -16,12 +16,7 @@ def random_forest(data_train, label_train, data_test, label_test, args):
     )
     clf.fit(data_train, label_train)
 
-    predicted = clf.predict(data_test)
-
-    print(metrics.classification_report(label_test, predicted))
-    print(metrics.confusion_matrix(label_test, predicted))
-
-    # print(clf.predict())
+    return clf.predict(data_test)
 
 if __name__ == "__main__":
     print('start random tree classification')
