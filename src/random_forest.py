@@ -1,7 +1,7 @@
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import metrics
 
-from helper import pre_processed_data, pre_processed_label
+from helper import pre_processed_data, pre_processed_label, compare_class_true_positive
 from arg import rForest_args
 
 import numpy as np
@@ -24,5 +24,6 @@ if __name__ == "__main__":
     data_train, data_test = pre_processed_data(args, rand)
     label_train, label_test = pre_processed_label(args, rand)
     print('data loaded')
-    random_forest(data_train, label_train, data_test)
+    found = random_forest(data_train, label_train, data_test)
     print('random tree done')
+    compare_class_true_positive(found, label_test)

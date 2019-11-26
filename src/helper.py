@@ -273,3 +273,28 @@ def compare_class(predicted, label):
     print('found: ', found)
     print('label: ', label_nb)
     matrix_confusion(label, predicted, unique_l)
+
+def compare_class_true_positive(predicted, label, specific=[]):
+    unique_p, counts_p = np.unique(predicted, return_counts=True)
+    found = dict(zip(unique_p, counts_p))
+    unique_l, counts_l = np.unique(label, return_counts=True)
+    label_nb = dict(zip(unique_l, counts_l))
+    matrix = confusion_matrix(label, predicted, unique_l)
+    u_matrix = {}
+    for elem in unique_l:
+        u_matrix[elem] = [[0, 0], [0, 0]]
+    for elem in u_matrix:
+        for i in range(len(unique_l)):
+            for j in range(len(unique_l)):
+                if i == j and i == elem:
+                    u_matrix[elem][0][0] = matrix[i][j]
+                elif i == elem:
+                    u_matrix[elem][0][1] += matrix[i][j]
+                elif j == elem:
+                    u_matrix[elem][1][0] += matrix[i][j]
+                else:
+                    u_matrix[elem][1][1] += matrix[i][j]
+    for elem in u_matrix:
+        if len(specific) == 0 or elem in specific:
+            print_matrix(np.array(u_matrix[elem]), np.array([0, 1]))
+            print()
