@@ -13,8 +13,10 @@ from sklearn.metrics import confusion_matrix
 
 DELI = ','
 FOLDER = '../data/random/'
-DATA_FILE = 'r_x_train_gr_smpl.csv'
+DATA_FILE = 'r_x_train_gr_smpl'
+DATA_FILE_TEST = 'r_x_test_gr_smpl'
 LABEL_FILE = 'r_y_train_smpl'
+LABEL_FILE_TEST = 'r_y_test_smpl'
 IMG_FOLDER = '../data/img/'
 SEP = '_'
 TEST = 'test' + SEP
@@ -48,22 +50,22 @@ def get_label(sep='', i='', folder=FOLDER, label_file=LABEL_FILE,
               ext=EXT):
     folder = folder or FOLDER
     label_file = label_file or LABEL_FILE
-    label = get_data_from_file((folder+label_file)+sep+str(i)+ext, dtype=int)
+    label = get_data_from_file(folder+label_file+sep+str(i)+ext, dtype=int)
     return label
 
 
 # give data as numpy array of integer
-def get_data(folder=FOLDER, data_file=DATA_FILE, deli=DELI, col=None):
+def get_data(folder=FOLDER, data_file=DATA_FILE, deli=DELI, ext=EXT, col=None):
     folder = folder or FOLDER
     data_file = data_file or DATA_FILE
-    return get_data_from_file(folder+data_file, deli, col=col)
+    return get_data_from_file(folder+data_file+ext, deli, col=col)
 
 
 # give data as numpy of string (one cell = one row)
-def get_data_raw(folder=FOLDER, data_file=DATA_FILE):
-        folder = folder or FOLDER
-        data_file = data_file or DATA_FILE
-        return np.genfromtxt(folder+data_file, dtype='str', skip_header=1)
+def get_data_raw(folder=FOLDER, data_file=DATA_FILE, ext=EXT):
+    folder = folder or FOLDER
+    data_file = data_file or DATA_FILE
+    return np.genfromtxt(folder+data_file+ext, dtype='str', skip_header=1)
 
 
 ####
@@ -110,20 +112,29 @@ def print_dry(m, dry):
 ####
 # PREPROCESSING
 ####
-def pre_processed_file(file_value, option, rand=0):
+def randomize_file(file_value, option,  rand=0):
     if option.randomize:
         file_value = preprocess.randomize(file_value, rand)
+    return file_value
+
+
+def split_file(file_value, option):
     if option.split is not None:
         file_value, file_value_test = preprocess.split_data(file_value,
                                                             option.split)
     else:
-        file_value_test = file_value
+        file_value_test = None
     return file_value, file_value_test
 
 
-def pre_processed_data(option, rand, dry=True):
-    data = get_data(folder=option.folder, data_file=option.data)
-    print_dry('data loaded', dry)
+def pre_processed_file(file_value, option, rand=0):
+    file_value = randomize_file(file_value, option, rand)
+    file_value, file_value_test = split_file(file_value, option)
+    return file_value, file_value_test
+
+
+def pre_processed_data_arg(data, option, rand, dry=True):
+    data = randomize_file(data, option, rand)
     if option.contrast:
         data = preprocess.contrast_images(data, option.contrast)
         print_dry('data contrasted', dry)
@@ -153,14 +164,67 @@ def pre_processed_data(option, rand, dry=True):
         print_dry('data binarised', dry)
     if option.extract is not None:
         data = preprocess.extract_col(data, option.extract)
-    return pre_processed_file(data, option, rand)
+    return data
 
 
 def pre_processed_label(option, rand, sep='', i='', dry=True):
     label = get_label(sep=sep, i=i, folder=option.folder,
                       label_file=option.label)
-    print_dry('label loaded', dry)
+    print_dry('label  loaded', dry)
     return pre_processed_file(label, option, rand)
+
+
+def pre_processed_label_test(option, rand, sep='', i='', dry=True):
+    label = get_label(sep=sep, i=i, folder=option.folder,
+                      label_file=option.label_test or LABEL_FILE_TEST)
+    print_dry('label test loaded', dry)
+    return randomize_file(label, option, rand)
+
+
+def pre_processed_data(option, rand, dry=True):
+    data = get_data(folder=option.folder, data_file=option.data)
+    print_dry('data loaded', dry)
+    return pre_processed_file(data, option, rand)
+
+
+def pre_processed_data_test(option, rand, dry=True):
+    data = get_data(folder=option.folder,
+                    data_file=option.data_test or DATA_FILE_TEST)
+    print_dry('data test loaded', dry)
+    return randomize_file(data, option, rand)
+
+
+def pre_processed_data_all(option, rand, dry=True):
+    data_train, data_train_test = pre_processed_data(option, rand, dry)
+    data_train = pre_processed_data_arg(data_train, option, rand, dry)
+    if option.test:
+        data_test = pre_processed_data_test(option, rand, dry)
+        if data_train_test is not None:
+            data_test = np.concatenate((data_test, data_train_test))
+        data_test = pre_processed_data_arg(data_test, option, rand, dry)
+    else:
+        if data_train_test is not None:
+            data_test = pre_processed_data_arg(data_train_test, option, rand,
+                                               dry)
+        else:
+            data_test = data_train
+    print(data_train.shape, data_test.shape)
+    return data_train, data_test
+
+
+def pre_processed_label_all(option, rand, sep='', i='', dry=True):
+    label_train, label_train_test = pre_processed_label(option, rand, sep, i,
+                                                        dry)
+    if option.test:
+        label_test = pre_processed_label_test(option, rand, sep, i, dry)
+        if label_train_test is not None:
+            label_test = np.concatenate((label_test, label_train_test))
+    else:
+        label_test = label_train \
+            if label_train_test is None \
+            else label_train_test
+    print(label_train.shape, label_test.shape)
+    return label_train, label_test
 
 
 ####
