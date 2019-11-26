@@ -263,3 +263,13 @@ def matrix_confusion(label, predicted, lb):
     #  print(100 * sum(max(matrix[:,i]) for i in range(len(matrix))) / len(label))
     #  print(list(max(matrix[:,i]) for i in range(len(matrix))))
     print_matrix(matrix, lb)
+
+
+def compare_class(predicted, label):
+    unique_p, counts_p = np.unique(predicted, return_counts=True)
+    found = dict(zip(unique_p, counts_p))
+    unique_l, counts_l = np.unique(label, return_counts=True)
+    label_nb = dict(zip(unique_l, counts_l))
+    print('found: ', found)
+    print('label: ', label_nb)
+    matrix_confusion(label, predicted, unique_l)
