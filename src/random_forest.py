@@ -7,7 +7,7 @@ from arg import rForest_args
 import numpy as np
 import random
 
-def random_forest(data_train, label_train, data_test, label_test, args):
+def random_forest(data_train, label_train, data_test):
     clf = RandomForestClassifier(
         n_estimators=1000,
         # max_depth=10,
@@ -15,7 +15,6 @@ def random_forest(data_train, label_train, data_test, label_test, args):
         # min_samples_leaf=10
     )
     clf.fit(data_train, label_train)
-
     return clf.predict(data_test)
 
 if __name__ == "__main__":
@@ -25,5 +24,5 @@ if __name__ == "__main__":
     data_train, data_test = pre_processed_data(args, rand)
     label_train, label_test = pre_processed_label(args, rand)
     print('data loaded')
-    random_forest(data_train, label_train, data_test, label_test, args)
+    random_forest(data_train, label_train, data_test)
     print('random tree done')
