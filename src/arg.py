@@ -59,7 +59,8 @@ def contrast_arg(c):
     else:
         msg = 'No enough arg provided'
         raise argparse.ArgumentTypeError(msg)
-    
+
+
 def parse_args(name):
     argp = argparse.ArgumentParser(name)
     argp.add_argument('-col', dest='columns', type=int, nargs='+',
@@ -111,9 +112,6 @@ def parse_args(name):
     return argp
 
 
-BAYES_LIST = ['gnb', 'cnb', 'bnb', 'mnb']
-
-
 def preprocess_args():
     argp = parse_args('preprocessing')
     argp.add_argument('-n', dest='name', default='',
@@ -122,7 +120,15 @@ def preprocess_args():
                       help='create files/images using the mean of the images')
     return argp.parse_args()
 
+
 def rForest_args():
     argp = parse_args('sk_learn random tree')
     # argp.add_argument( ) ## Check le man
+    return argp.parse_args()
+
+
+def keras_args():
+    argp = parse_args('keras ANN')
+    argp.add_argument('-ep', dest='epochs', type=int, default=1,
+                      help='Number of Epochs to train the ANN')
     return argp.parse_args()

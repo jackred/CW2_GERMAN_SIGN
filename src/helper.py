@@ -274,6 +274,7 @@ def compare_class(predicted, label):
     print('label: ', label_nb)
     matrix_confusion(label, predicted, unique_l)
 
+
 def compare_class_true_positive(predicted, label, specific=[]):
     unique_p, counts_p = np.unique(predicted, return_counts=True)
     found = dict(zip(unique_p, counts_p))
@@ -298,3 +299,8 @@ def compare_class_true_positive(predicted, label, specific=[]):
         if len(specific) == 0 or elem in specific:
             print('matrix true', elem)
             print_matrix(np.array(u_matrix[elem]), np.array([0, 1]))
+            print()
+
+
+def score_to_class(score):
+    return np.array([np.argmax(i) for i in score])
