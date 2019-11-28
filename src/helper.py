@@ -8,7 +8,7 @@
 
 import numpy as np
 import preprocess
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, roc_auc_score, f1_score
 
 
 DELI = ','
@@ -277,9 +277,7 @@ def compare_class(predicted, label):
 
 def compare_class_true_positive(predicted, label, specific=[]):
     unique_p, counts_p = np.unique(predicted, return_counts=True)
-    found = dict(zip(unique_p, counts_p))
     unique_l, counts_l = np.unique(label, return_counts=True)
-    label_nb = dict(zip(unique_l, counts_l))
     matrix = confusion_matrix(label, predicted, unique_l)
     u_matrix = {}
     for elem in unique_l:
@@ -304,3 +302,24 @@ def compare_class_true_positive(predicted, label, specific=[]):
 
 def score_to_class(score):
     return np.array([np.argmax(i) for i in score])
+
+def print_detail_measure(name, arr, detail=False):
+    print(name, ':', sum(arr) / len(arr))
+    if detail:
+        for i in range(len(arr)):
+            print('\t', i, ':', arr[i])
+            
+def measure(predicted, label, confidence, detail=False):
+    print_detail_measure('precision score', precision_score(label, predicted, average=None), detail)
+    print_detail_measure('recall score', recall_score(label, predicted, average=None), detail)
+    scores = np.array([])
+    for elem in confidence:
+        scores = np.append(scores, np.amax(elem))
+    true = np.array([], dtype=int)
+    for exp, got in zip(label, predicted):
+        val = 0
+        if exp == got:
+            val = 1
+        true = np.append(true, int(val))
+    print('ROC Area score', roc_auc_score(true, scores))
+    print_detail_measure('F measure', f1_score(label, predicted, average=None), detail)

@@ -1,16 +1,16 @@
 from sklearn.linear_model import SGDClassifier
 
 from helper import pre_processed_data_all, pre_processed_label_all, \
-    compare_class_true_positive, compare_class
+    compare_class_true_positive, compare_class, measure
 from arg import rForest_args
 
 import numpy as np
 import random
 
 def linear_classifier(data_train, label_train, data_test):
-    clf = SGDClassifier()
+    clf = SGDClassifier(loss='modified_huber')
     clf.fit(data_train, label_train)
-    return clf.predict(data_test)
+    return clf.predict(data_test), clf.predict_proba(data_test)
 
 if __name__ == "__main__":
     print('start linear classifier')
@@ -19,7 +19,8 @@ if __name__ == "__main__":
     data_train, data_test = pre_processed_data_all(args, rand)
     label_train, label_test = pre_processed_label_all(args, rand)
     print('data loaded')
-    found = linear_classifier(data_train, label_train, data_test)
+    found, confidence = linear_classifier(data_train, label_train, data_test)
     print('linear classifier done')
     compare_class_true_positive(found, label_test)
     compare_class(found, label_test)
+    measure(found, label_test, confidence)
