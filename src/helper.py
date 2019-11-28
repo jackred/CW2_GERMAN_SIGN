@@ -274,7 +274,6 @@ def compare_class(predicted, label):
     print('label: ', label_nb)
     matrix_confusion(label, predicted, unique_l)
 
-
 def compare_class_true_positive(predicted, label, specific=[]):
     unique_p, counts_p = np.unique(predicted, return_counts=True)
     unique_l, counts_l = np.unique(label, return_counts=True)
@@ -293,10 +292,16 @@ def compare_class_true_positive(predicted, label, specific=[]):
                     u_matrix[elem][1][0] += matrix[i][j]
                 else:
                     u_matrix[elem][1][1] += matrix[i][j]
-    for elem in u_matrix:
+    precision = precision_score(label, predicted, average=None)
+    recall = recall_score(label, predicted, average=None)
+    f1 = f1_score(label, predicted, average=None)
+    for elem, p, r, f in zip(u_matrix, precision, recall, f1):
         if len(specific) == 0 or elem in specific:
             print('matrix true', elem)
             print_matrix(np.array(u_matrix[elem]), np.array([0, 1]))
+            print('precision score', p)
+            print('recall score', r)
+            print('F measure', f)
             print()
 
 
