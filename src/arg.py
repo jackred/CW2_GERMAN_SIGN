@@ -121,6 +121,13 @@ def preprocess_args():
     return argp.parse_args()
 
 
+def j48_args():
+    argp = parse_args('j48')
+    argp.add_argument('-depth', dest='depth', default=15, type=int,
+                      help='depth of the tree')
+    return argp.parse_args()
+
+
 def rForest_args():
     argp = parse_args('sk_learn random tree')
     # argp.add_argument( ) ## Check le man
