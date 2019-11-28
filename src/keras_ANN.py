@@ -74,17 +74,23 @@ def keras_ann_model(x_train, y_train, epochs=1):
     return model
 
 
+def keras_build_and_predict(data_train, label_train, data_test, epochs):
+    model = keras_ann_model(data_train, label_train, epochs)
+    model.summary()
+    plot_model(model)
+    predicted = keras_ann_predict(data_test)
+    predicted = helper.score_to_class(predicted)
+    return predicted
+
+
 def main():
     args = keras_args()
     rand = np.random.randint(10000000)
     data_train, data_test = helper.pre_processed_data_all(args, rand)
     label_train, label_test = helper.pre_processed_label_all(args, rand)
-    model = keras_ann_model(data_train, label_train, epochs=args.epochs)
-    model.summary()
-    predicted = keras_ann_predict(model, data_test)
-    predicted = helper.score_to_class(predicted)
+    predicted = keras_build_and_predict(data_train, label_train, data_test,
+                                        args.epochs)
     helper.compare_class(predicted, label_test)
-    plot_model(model)
 
 
 if __name__ == '__main__':
