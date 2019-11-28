@@ -78,7 +78,7 @@ def keras_build_and_predict(data_train, label_train, data_test, epochs):
     model = keras_ann_model(data_train, label_train, epochs)
     model.summary()
     plot_model(model)
-    predicted = keras_ann_predict(data_test)
+    predicted = keras_ann_predict(model, data_test)
     predicted = helper.score_to_class(predicted)
     return predicted
 
@@ -88,9 +88,10 @@ def main():
     rand = np.random.randint(10000000)
     data_train, data_test = helper.pre_processed_data_all(args, rand)
     label_train, label_test = helper.pre_processed_label_all(args, rand)
-    predicted = keras_build_and_predict(data_train, label_train, data_test,
-                                        args.epochs)
-    helper.compare_class(predicted, label_test)
+    helper.cross_validate(data_train, label_train,
+                          keras_build_and_predict,
+                          k=2,
+                          epochs=args.epochs)
 
 
 if __name__ == '__main__':

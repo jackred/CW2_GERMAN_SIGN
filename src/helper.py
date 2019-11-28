@@ -8,7 +8,8 @@
 
 import numpy as np
 import preprocess
-from sklearn.metrics import confusion_matrix, precision_score, recall_score, roc_auc_score, f1_score
+from sklearn.metrics import confusion_matrix, precision_score, \
+    recall_score, roc_auc_score, f1_score
 
 
 DELI = ','
@@ -257,7 +258,9 @@ def print_matrix(m, lb):
     print_line_matrix(len(lb))
 
 
-# create and print confusion_matrix
+####
+# Measure and Precision
+####
 def matrix_confusion(label, predicted, lb):
     matrix = confusion_matrix(label, predicted)
     #  print(100 * sum(max(matrix[:,i]) for i in range(len(matrix))) / len(label))
@@ -273,6 +276,7 @@ def compare_class(predicted, label):
     print('found: ', found)
     print('label: ', label_nb)
     matrix_confusion(label, predicted, unique_l)
+
 
 def compare_class_true_positive(predicted, label, specific=[]):
     unique_p, counts_p = np.unique(predicted, return_counts=True)
@@ -305,19 +309,31 @@ def compare_class_true_positive(predicted, label, specific=[]):
             print()
 
 
+def precision(predicted, label):
+    return sum(predicted == label) / len(label)
+
+
 def score_to_class(score):
     return np.array([np.argmax(i) for i in score])
+
 
 def print_detail_measure(name, arr, detail=False):
     print(name, ':', sum(arr) / len(arr))
     if detail:
         for i in range(len(arr)):
             print('\t', i, ':', arr[i])
-            
+
+
 def measure(predicted, label, confidence, detail=False):
-    print_detail_measure('precision score', precision_score(label, predicted, average=None), detail)
-    print_detail_measure('recall score', recall_score(label, predicted, average=None), detail)
-    print_detail_measure('F measure', f1_score(label, predicted, average=None), detail)
+    print_detail_measure('precision score',
+                         precision_score(label, predicted, average=None),
+                         detail)
+    print_detail_measure('recall score',
+                         recall_score(label, predicted, average=None),
+                         detail)
+    print_detail_measure('F measure',
+                         f1_score(label, predicted, average=None),
+                         detail)
     scores = np.array([])
     for elem in confidence:
         scores = np.append(scores, np.amax(elem))
@@ -328,3 +344,23 @@ def measure(predicted, label, confidence, detail=False):
             val = 1
         true = np.append(true, int(val))
     print('ROC Area score', roc_auc_score(true, scores))
+
+
+####
+# Cross Validation
+####
+def cross_validate(data, label, fn, k=10,
+                   **kwargs):
+    accs = []
+    datas = np.array_split(data, k)
+    labels = np.array_split(label, k)
+    for i in range(k):
+        data_train = np.concatenate(np.concatenate((datas[:k], datas[k+1:])))
+        label_train = np.concatenate(np.concatenate((labels[:k],
+                                                     labels[k+1:])))
+        data_test = datas[i]
+        label_test = labels[i]
+        predicted = fn(data_train, label_train, data_test, **kwargs)
+        accs.append(precision(predicted, label_test))
+    print("acs: ", accs)
+    print("acc: ", np.mean(accs))
