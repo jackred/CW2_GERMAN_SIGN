@@ -1,6 +1,7 @@
 from sklearn.linear_model import SGDClassifier
 
-from helper import pre_processed_data, pre_processed_label, compare_class_true_positive, compare_class
+from helper import pre_processed_data_all, pre_processed_label_all, \
+    compare_class_true_positive, compare_class
 from arg import rForest_args
 
 import numpy as np
@@ -15,8 +16,8 @@ if __name__ == "__main__":
     print('start linear classifier')
     args = rForest_args()
     rand = np.random.randint(100000)
-    data_train, data_test = pre_processed_data(args, rand)
-    label_train, label_test = pre_processed_label(args, rand)
+    data_train, data_test = pre_processed_data_all(args, rand)
+    label_train, label_test = pre_processed_label_all(args, rand)
     print('data loaded')
     found = linear_classifier(data_train, label_train, data_test)
     print('linear classifier done')
