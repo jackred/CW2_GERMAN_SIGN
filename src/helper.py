@@ -296,5 +296,5 @@ def compare_class_true_positive(predicted, label, specific=[]):
                     u_matrix[elem][1][1] += matrix[i][j]
     for elem in u_matrix:
         if len(specific) == 0 or elem in specific:
+            print('matrix true', elem)
             print_matrix(np.array(u_matrix[elem]), np.array([0, 1]))
-            print()

@@ -12,7 +12,7 @@ def linear_classifier(data_train, label_train, data_test):
     return clf.predict(data_test)
 
 if __name__ == "__main__":
-    print('start random tree classification')
+    print('start linear classifier')
     args = rForest_args()
     rand = np.random.randint(100000)
     data_train, data_test = pre_processed_data(args, rand)
