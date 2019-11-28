@@ -312,6 +312,7 @@ def print_detail_measure(name, arr, detail=False):
 def measure(predicted, label, confidence, detail=False):
     print_detail_measure('precision score', precision_score(label, predicted, average=None), detail)
     print_detail_measure('recall score', recall_score(label, predicted, average=None), detail)
+    print_detail_measure('F measure', f1_score(label, predicted, average=None), detail)
     scores = np.array([])
     for elem in confidence:
         scores = np.append(scores, np.amax(elem))
@@ -322,4 +323,3 @@ def measure(predicted, label, confidence, detail=False):
             val = 1
         true = np.append(true, int(val))
     print('ROC Area score', roc_auc_score(true, scores))
-    print_detail_measure('F measure', f1_score(label, predicted, average=None), detail)

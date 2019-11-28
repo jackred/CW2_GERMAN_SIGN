@@ -23,4 +23,4 @@ if __name__ == "__main__":
     print('linear classifier done')
     compare_class_true_positive(found, label_test)
     compare_class(found, label_test)
-    measure(found, label_test, confidence)
+    measure(found, label_test, confidence, True)
