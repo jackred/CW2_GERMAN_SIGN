@@ -327,10 +327,11 @@ def measure(predicted, label, confidence, detail=False):
 
 
 def precision(predicted, label, detail=False):
-    score = precision_score(label, predicted, average=None)
-    if not detail:
-        return sum(score) / len(score)
-    return score
+    # score = precision_score(label, predicted, average=None)
+    # if not detail:
+    #     return sum(score) / len(score)
+    # return score
+    return sum(predicted == label) / len(label)
 
 
 def recall(predicted, label, detail=False):
@@ -368,7 +369,6 @@ def _get_true_matrix(predicted, label):
     return u_matrix
 
 
-
 def true_positive(predicted, label, detail=False):
     print(label)
     matrix = _get_true_matrix(predicted, label)
@@ -378,7 +378,8 @@ def true_positive(predicted, label, detail=False):
     for elem in matrix:
         som += matrix[elem][0][0]
         tot += matrix[elem][0][0] + matrix[elem][0][1]
-        tp.append(matrix[elem][0][0] / (matrix[elem][0][1] + matrix[elem][0][0]))
+        tp.append(matrix[elem][0][0] / (matrix[elem][0][1]
+                                        + matrix[elem][0][0]))
     if not detail:
         return som / tot
     return tp
@@ -392,7 +393,8 @@ def false_positive(predicted, label, detail=False):
     for elem in matrix:
         som += matrix[elem][0][1]
         tot += matrix[elem][0][0] + matrix[elem][0][1]
-        tp.append(matrix[elem][0][1] * 100 / (matrix[elem][0][1] + matrix[elem][0][0]))
+        tp.append(matrix[elem][0][1] * 100 / (matrix[elem][0][1]
+                                              + matrix[elem][0][0]))
     if not detail:
         return som / tot
     return tp
@@ -470,6 +472,7 @@ def run_function(fn, cross, data_train, label_train, data_test, label_test,
         print('training then testing')
         predicted = fn(data_train, label_train, data_test, **kwargs)
         measures = [all_measure(predicted, label_test)]
+        print(measures)
         measures = extract_measures(measures)
         print_measures(measures)
         compare_class(predicted, label_test)
