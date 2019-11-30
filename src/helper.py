@@ -327,11 +327,14 @@ def measure(predicted, label, confidence, detail=False):
 
 
 def precision(predicted, label, detail=False):
-    # score = precision_score(label, predicted, average=None)
-    # if not detail:
-    #     return sum(score) / len(score)
-    # return score
-    return sum(predicted == label) / len(label)
+    if not detail:
+        return sum(predicted == label) / len(label)
+    else:
+        unique = np.unique(label)
+        res = []
+        for i in unique:
+            res.append(np.logical_and(predicted == i, label == i))
+        return res
 
 
 def recall(predicted, label, detail=False):
