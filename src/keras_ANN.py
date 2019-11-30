@@ -22,10 +22,8 @@ def keras_ann_predict(model, x_test):
     dim = int(sqrt(len(x_test[0])))
     if K.image_data_format() == 'channels_first':
         x_test = x_test.reshape(x_test.shape[0], 1, dim, dim)
-        input_shape = (1, dim, dim)
     else:
         x_test = x_test.reshape(x_test.shape[0], dim, dim, 1)
-        input_shape = (dim, dim, 1)
     x_test = x_test.astype('float32')
     x_test /= 255
     print(x_test.shape[0], 'test samples')
@@ -55,7 +53,7 @@ def keras_ann_model(x_train, y_train, epochs=1):
     model.add(Conv2D(32, kernel_size=(3, 3),
                      activation='relu',
                      input_shape=input_shape))
-    model.add(Conv2D(64, (3, 3), activation='relu'))
+    model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
     model.add(Flatten())
@@ -90,7 +88,7 @@ def main():
     label_train, label_test = helper.pre_processed_label_all(args, rand)
     helper.cross_validate(data_train, label_train,
                           keras_build_and_predict,
-                          k=2,
+                          k=5,
                           epochs=args.epochs)
 
 

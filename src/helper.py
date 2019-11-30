@@ -292,17 +292,17 @@ def compare_class_true_positive(predicted, label, specific=[]):
             print('F measure', f)
             print()
 
-def precision(predicted, label):
-    return sum(predicted == label) / len(label)
 
 def score_to_class(score):
     return np.array([np.argmax(i) for i in score])
+
 
 def print_detail_measure(name, arr, detail=False):
     print(name, ':', sum(arr) / len(arr))
     if detail:
         for i in range(len(arr)):
             print('\t', i, ':', arr[i])
+
 
 def measure(predicted, label, confidence, detail=False):
     print_detail_measure('precision score',
@@ -325,11 +325,13 @@ def measure(predicted, label, confidence, detail=False):
         true = np.append(true, int(val))
     print('ROC Area score', roc_auc_score(true, scores))
 
+
 def precision(predicted, label, detail=False):
     score = precision_score(label, predicted, average=None)
     if not detail:
         return sum(score) / len(score)
     return score
+
 
 def recall(predicted, label, detail=False):
     score = recall_score(label, predicted, average=None)
@@ -337,11 +339,13 @@ def recall(predicted, label, detail=False):
         return sum(score) / len(score)
     return score
 
+
 def f_measure(predicted, label, detail=False):
     score = f1_score(label, predicted, average=None)
     if not detail:
         return sum(score) / len(score)
     return score
+
 
 def _get_true_matrix(predicted, label):
     unique_p, counts_p = np.unique(predicted, return_counts=True)
@@ -363,6 +367,7 @@ def _get_true_matrix(predicted, label):
                     u_matrix[elem][1][1] += matrix[i][j]
     return u_matrix
 
+
 def true_positive(predicted, label, detail=False):
     matrix = _get_true_matrix(predicted, label)
     tp = []
@@ -372,6 +377,7 @@ def true_positive(predicted, label, detail=False):
         return sum(tp) / len(tp)
     return tp
 
+
 def false_positive(predicted, label, detail=False):
     matrix = _get_true_matrix(predicted, label)
     tp = []
@@ -380,6 +386,7 @@ def false_positive(predicted, label, detail=False):
     if not detail:
         return sum(tp) / len(tp)
     return tp
+
 
 def roc_score(predicted, label, confidence):
     scores = np.array([])
@@ -400,6 +407,10 @@ def roc_score(predicted, label, confidence):
 def cross_validate(data, label, fn, k=10,
                    **kwargs):
     accs = []
+    recalls = []
+    f_measures = []
+    true_positives = []
+    false_positives = []
     datas = np.array_split(data, k)
     labels = np.array_split(label, k)
     for i in range(k):
@@ -410,5 +421,17 @@ def cross_validate(data, label, fn, k=10,
         label_test = labels[i]
         predicted = fn(data_train, label_train, data_test, **kwargs)
         accs.append(precision(predicted, label_test))
+        recalls.append(recall(predicted, label_test))
+        f_measures.append(f_measure(predicted, label_test))
+        true_positives.append(true_positive(predicted, label_test))
+        false_positives.append(false_positive(predicted, label_test))
     print("acs: ", accs)
     print("acc: ", np.mean(accs))
+    print("recalls: ", recalls)
+    print("recalls: ", np.mean(recalls))
+    print("f_measures: ", f_measures)
+    print("f_measures: ", np.mean(f_measures))
+    print("true_positives: ", true_positives)
+    print("true_positives: ", np.mean(true_positives))
+    print("false_positives: ", false_positives)
+    print("false_positives: ", np.mean(false_positives))
