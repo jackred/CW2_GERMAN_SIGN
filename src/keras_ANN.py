@@ -86,10 +86,11 @@ def main():
     rand = np.random.randint(10000000)
     data_train, data_test = helper.pre_processed_data_all(args, rand)
     label_train, label_test = helper.pre_processed_label_all(args, rand)
-    helper.cross_validate(data_train, label_train,
-                          keras_build_and_predict,
-                          k=5,
-                          epochs=args.epochs)
+    helper.run_function(keras_build_and_predict,
+                        args.cross_validate,
+                        data_train, label_train,
+                        data_test, label_test,
+                        epochs=args.epochs)
 
 
 if __name__ == '__main__':

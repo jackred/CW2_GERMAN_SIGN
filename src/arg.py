@@ -109,6 +109,8 @@ def parse_args(name):
                       + ' combine lower region under threshold')
     argp.add_argument('-x', dest='extract', type=int, nargs='+',
                       help='extract the given column after the processing')
+    argp.add_argument('-cross', dest='cross_validate', type=int,
+                      help='number of fold for cross_validation')
     return argp
 
 

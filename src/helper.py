@@ -401,37 +401,65 @@ def roc_score(predicted, label, confidence):
     return roc_auc_score(true, scores)
 
 
+def all_measure(predicted, label_test):
+    accs = precision(predicted, label_test)
+    recalls = recall(predicted, label_test)
+    f_measures = f_measure(predicted, label_test)
+    true_positives = true_positive(predicted, label_test)
+    false_positives = false_positive(predicted, label_test)
+    return {'accs': accs,
+            'recalls': recalls,
+            'f_measures': f_measures,
+            'true_positives': true_positives,
+            'false_positives': false_positives}
+
+
+def extract_measure(measures, key):
+    return [measure[key] for measure in measures]
+
+
+def extract_measures(measures):
+    return {key: extract_measure(measures, key) for key in measures[0]}
+
+
+def print_measures(measures):
+    for k in measures:
+        if len(measures[k]) > 1:
+            print(k, measures[k])
+        print('mean: ', k[:-1], np.mean(measures[k]))
+
+
 ####
 # Cross Validation
 ####
-def cross_validate(data, label, fn, k=10,
+def cross_validate(fn, data, label, k=10,
                    **kwargs):
-    accs = []
-    recalls = []
-    f_measures = []
-    true_positives = []
-    false_positives = []
+    measures = []
     datas = np.array_split(data, k)
+    print(len(datas), [i.shape for i in datas])
     labels = np.array_split(label, k)
     for i in range(k):
+        print('fold %d' % i)
         data_train = np.concatenate(np.concatenate((datas[:k], datas[k+1:])))
         label_train = np.concatenate(np.concatenate((labels[:k],
                                                      labels[k+1:])))
         data_test = datas[i]
         label_test = labels[i]
         predicted = fn(data_train, label_train, data_test, **kwargs)
-        accs.append(precision(predicted, label_test))
-        recalls.append(recall(predicted, label_test))
-        f_measures.append(f_measure(predicted, label_test))
-        true_positives.append(true_positive(predicted, label_test))
-        false_positives.append(false_positive(predicted, label_test))
-    print("acs: ", accs)
-    print("acc: ", np.mean(accs))
-    print("recalls: ", recalls)
-    print("recalls: ", np.mean(recalls))
-    print("f_measures: ", f_measures)
-    print("f_measures: ", np.mean(f_measures))
-    print("true_positives: ", true_positives)
-    print("true_positives: ", np.mean(true_positives))
-    print("false_positives: ", false_positives)
-    print("false_positives: ", np.mean(false_positives))
+        measures.append(all_measure(predicted, label_test))
+    measures = extract_measures(measures)
+    print_measures(measures)
+
+
+def run_function(fn, cross, data_train, label_train, data_test, label_test,
+                 **kwargs):
+    if cross is not None:
+        print('cross_validating')
+        cross_validate(fn, data_train, label_train, cross, **kwargs)
+    else:
+        print('training then testing')
+        predicted = fn(data_train, label_train, data_test, **kwargs)
+        measures = [all_measure(predicted, label_test)]
+        measures = extract_measures(measures)
+        print_measures(measures)
+        compare_class(predicted, label_test)
