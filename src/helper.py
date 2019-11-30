@@ -373,20 +373,28 @@ def true_positive(predicted, label, detail=False):
     print(label)
     matrix = _get_true_matrix(predicted, label)
     tp = []
+    som = 0
+    tot = 0
     for elem in matrix:
-        tp.append(matrix[elem][0][0] * 100 / (matrix[elem][0][1] + matrix[elem][0][0]))
+        som += matrix[elem][0][0]
+        tot += matrix[elem][0][0] + matrix[elem][0][1]
+        tp.append(matrix[elem][0][0] / (matrix[elem][0][1] + matrix[elem][0][0]))
     if not detail:
-        return sum(tp) / len(tp)
+        return som / tot
     return tp
 
 
 def false_positive(predicted, label, detail=False):
     matrix = _get_true_matrix(predicted, label)
     tp = []
+    som = 0
+    tot = 0
     for elem in matrix:
+        som += matrix[elem][0][1]
+        tot += matrix[elem][0][0] + matrix[elem][0][1]
         tp.append(matrix[elem][0][1] * 100 / (matrix[elem][0][1] + matrix[elem][0][0]))
     if not detail:
-        return sum(tp) / len(tp) 
+        return som / tot
     return tp
 
 
