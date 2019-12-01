@@ -10,6 +10,7 @@ import numpy as np
 import preprocess
 from sklearn.metrics import confusion_matrix, precision_score, \
     recall_score, roc_auc_score, f1_score
+import matplotlib.pyplot as plt
 
 
 DELI = ','
@@ -415,15 +416,17 @@ def extract_measures(measures):
 
 def print_measures(measures):
     for k in measures:
-        if len(measures[k]) > 1:
-            print(k, measures[k])
-        print('mean: ', k[:-1], np.mean(measures[k]))
+        print(k, measures[k])
+
+
+def mean_measures(measures):
+    return {k[:-1]: np.mean(measures[k]) for k in measures}
 
 
 ####
 # Cross Validation
 ####
-def cross_validate(fn, data, label, k=10,
+def cross_validate(fn, data, label, k=10, dry=False,
                    **kwargs):
     measures = []
     datas = np.array_split(data, k)
@@ -440,18 +443,33 @@ def cross_validate(fn, data, label, k=10,
         measures.append(all_measure(predicted, label_test))
     measures = extract_measures(measures)
     print_measures(measures)
+    return mean_measures(measures)
 
 
 def run_function(fn, cross, data_train, label_train, data_test, label_test,
                  **kwargs):
     if cross is not None:
         print('cross_validating')
-        cross_validate(fn, data_train, label_train, cross, **kwargs)
+        return cross_validate(fn, data_train, label_train, cross, **kwargs)
     else:
         print('training then testing')
         predicted = fn(data_train, label_train, data_test, **kwargs)
         measures = [all_measure(predicted, label_test)]
-        print(measures)
         measures = extract_measures(measures)
-        print_measures(measures)
         compare_class(predicted, label_test)
+        return mean_measures(measures)
+
+
+COLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
+
+
+def plot_experiment(title, x_label, to_plot):
+    i = 0
+    plt.title(title)
+    plt.xlabel(x_label)
+    plt.ylabel('%')
+    for k in to_plot:
+        plt.plot(to_plot[k], color=COLORS[i], label=k)
+        i += 1
+    plt.legend()
+    plt.show()

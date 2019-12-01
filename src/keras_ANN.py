@@ -86,11 +86,18 @@ def main():
     rand = np.random.randint(10000000)
     data_train, data_test = helper.pre_processed_data_all(args, rand)
     label_train, label_test = helper.pre_processed_label_all(args, rand)
-    helper.run_function(keras_build_and_predict,
-                        args.cross_validate,
-                        data_train, label_train,
-                        data_test, label_test,
-                        epochs=args.epochs)
+    res = []
+    for i in range(10):
+        print('===\n=====Epochs: %d=====\n===' % i)
+        res.append(helper.run_function(keras_build_and_predict,
+                                       args.cross_validate,
+                                       data_train, label_train,
+                                       data_test, label_test,
+                                       epochs=i))
+    print(res)
+    res = helper.extract_measures(res)
+    print(res)
+    helper.plot_experiment('test', 'epochs', res)
 
 
 if __name__ == '__main__':
