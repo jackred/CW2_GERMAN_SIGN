@@ -337,17 +337,10 @@ def precision(predicted, label, detail=False):
         return res
 
 
-def recall(predicted, label, detail=False):
-    score = recall_score(label, predicted, average=None)
-    if not detail:
-        return sum(score) / len(score)
-    return score
-
-
 def f_measure(predicted, label, detail=False):
     score = f1_score(label, predicted, average=None)
     if not detail:
-        return sum(score) / len(score)
+        return sum(score) / len(np.union1d(predicted, label))
     return score
 
 
@@ -372,25 +365,14 @@ def _get_true_matrix(predicted, label):
     return u_matrix
 
 
-def true_positive(predicted, label, detail=False):
-    print(label)
-    matrix = _get_true_matrix(predicted, label)
-    tp = []
-    for elem in matrix:
-        tp.append(matrix[elem][0][0] * 100 / (matrix[elem][0][1] + matrix[elem][0][0]))
+def true_and_false_positive(predicted, label, detail=False):
+    score = recall_score(label, predicted, average=None)
+    print('score', score)
     if not detail:
-        return sum(tp) / len(tp)
-    return tp
+        res = sum(score) / len(np.union1d(predicted, label))
+        return res, 1 - res
+    return score, [1 - i for i in score]
 
-
-def false_positive(predicted, label, detail=False):
-    matrix = _get_true_matrix(predicted, label)
-    tp = []
-    for elem in matrix:
-        tp.append(matrix[elem][0][1] * 100 / (matrix[elem][0][1] + matrix[elem][0][0]))
-    if not detail:
-        return sum(tp) / len(tp) 
-    return tp
 
 def roc_score(predicted, label, confidence):
     scores = np.array([])
@@ -407,12 +389,10 @@ def roc_score(predicted, label, confidence):
 
 def all_measure(predicted, label_test):
     accs = precision(predicted, label_test)
-    recalls = recall(predicted, label_test)
     f_measures = f_measure(predicted, label_test)
-    true_positives = true_positive(predicted, label_test)
-    false_positives = false_positive(predicted, label_test)
+    true_positives, false_positives = true_and_false_positive(predicted,
+                                                              label_test)
     return {'accs': accs,
-            'recalls': recalls,
             'f_measures': f_measures,
             'true_positives': true_positives,
             'false_positives': false_positives}
