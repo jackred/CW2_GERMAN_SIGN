@@ -130,7 +130,10 @@ def split_file(file_value, option):
 
 def pre_processed_file(file_value, option, rand=0):
     file_value = randomize_file(file_value, option, rand)
-    file_value, file_value_test = split_file(file_value, option)
+    if option.cross_validate is not None:
+        file_value_test = file_value
+    else:
+        file_value, file_value_test = split_file(file_value, option)
     return file_value, file_value_test
 
 
@@ -198,6 +201,8 @@ def pre_processed_data_test(option, rand, dry=True):
 def pre_processed_data_all(option, rand, dry=True):
     data_train, data_train_test = pre_processed_data(option, rand, dry)
     data_train = pre_processed_data_arg(data_train, option, rand, dry)
+    if option.cross_validate is not None:
+        return data_train, data_train
     if option.test:
         data_test = pre_processed_data_test(option, rand, dry)
         if data_train_test is not None:
@@ -216,6 +221,8 @@ def pre_processed_data_all(option, rand, dry=True):
 def pre_processed_label_all(option, rand, sep='', i='', dry=True):
     label_train, label_train_test = pre_processed_label(option, rand, sep, i,
                                                         dry)
+    if option.cross_validate is not None:
+        return label_train, label_train
     if option.test:
         label_test = pre_processed_label_test(option, rand, sep, i, dry)
         if label_train_test is not None:
