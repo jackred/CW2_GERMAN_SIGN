@@ -6,6 +6,10 @@
 
 # author: JackRed <jackred@tuta.io>
 
+
+# From the website https://faroit.github.io/keras-docs/0.1.3/examples/
+# The author of the original code (mnist_cnn.py) is Junwei Pan (kemsawill)
+
 from arg import keras_args
 import numpy as np
 import helper
@@ -87,7 +91,7 @@ def main():
     data_train, data_test = helper.pre_processed_data_all(args, rand)
     label_train, label_test = helper.pre_processed_label_all(args, rand)
     res = []
-    for i in range(10):
+    for i in range(1, 2):
         print('===\n=====Epochs: %d=====\n===' % i)
         res.append(helper.run_function(keras_build_and_predict,
                                        args.cross_validate,

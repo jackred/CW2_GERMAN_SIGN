@@ -432,14 +432,14 @@ def mean_measures(measures):
 def cross_validate(fn, data, label, k=10, dry=False,
                    **kwargs):
     measures = []
-    datas = np.array_split(data, k)
+    datas = np.array(np.array_split(data, k))
     print(len(datas), [i.shape for i in datas])
-    labels = np.array_split(label, k)
+    labels = np.array(np.array_split(label, k))
     for i in range(k):
         print('fold %d' % i)
-        data_train = np.concatenate(np.concatenate((datas[:k], datas[k+1:])))
-        label_train = np.concatenate(np.concatenate((labels[:k],
-                                                     labels[k+1:])))
+        data_train = np.concatenate(np.concatenate((datas[:i], datas[i+1:])))
+        label_train = np.concatenate(np.concatenate((labels[:i],
+                                                     labels[i+1:])))
         data_test = datas[i]
         label_test = labels[i]
         predicted = fn(data_train, label_train, data_test, **kwargs)
