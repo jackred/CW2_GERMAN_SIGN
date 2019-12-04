@@ -8,15 +8,12 @@
 
 import numpy as np
 import preprocess
-<<<<<<< Updated upstream
 from sklearn.metrics import confusion_matrix, precision_score, \
     recall_score, roc_auc_score, f1_score
 import matplotlib.pyplot as plt
-=======
 import pydotplus
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, roc_auc_score, f1_score, classification_report, confusion_matrix
 from sklearn import tree
->>>>>>> Stashed changes
 
 
 DELI = ','
@@ -479,6 +476,18 @@ def plot_experiment(title, x_label, to_plot):
         i += 1
     plt.legend()
     plt.show()
+
+
+def plot_experiment_server(title, x_label, to_plot):
+    i = 0
+    plt.title(title)
+    plt.xlabel(x_label)
+    plt.ylabel('%')
+    for k in to_plot:
+        plt.plot(to_plot[k], color=COLORS[i], label=k)
+        i += 1
+    plt.legend()
+    plt.savefig(title + ".png")
 
 
 def print_result(label, predicted):
