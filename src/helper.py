@@ -8,9 +8,15 @@
 
 import numpy as np
 import preprocess
+<<<<<<< Updated upstream
 from sklearn.metrics import confusion_matrix, precision_score, \
     recall_score, roc_auc_score, f1_score
 import matplotlib.pyplot as plt
+=======
+import pydotplus
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, roc_auc_score, f1_score, classification_report, confusion_matrix
+from sklearn import tree
+>>>>>>> Stashed changes
 
 
 DELI = ','
@@ -473,3 +479,25 @@ def plot_experiment(title, x_label, to_plot):
         i += 1
     plt.legend()
     plt.show()
+
+
+def print_result(label, predicted):
+    print(classification_report(label, predicted))
+    print(confusion_matrix(label, predicted))
+
+
+def tree_to_png(model):
+    className = ["speed limit 60", "speed limit 80", "speed limit 80 lifted", "right of way at crossing",
+                 "right of way in general", "give way", "stop", "no speed limit general", "turn right down",
+                 "turn left down"]
+    featureName = []
+    for i in range(0, 2304):
+        featureName.append(i)
+    dot_data = tree.export_graphviz(
+                model,
+                out_file=None,
+                feature_names=featureName,
+                class_names=className
+    )
+    graph = pydotplus.graph_from_dot_data(dot_data)
+    graph.write_png("tree.png")
