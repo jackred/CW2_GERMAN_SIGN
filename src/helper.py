@@ -12,7 +12,8 @@ from sklearn.metrics import confusion_matrix, precision_score, \
     recall_score, roc_auc_score, f1_score
 import matplotlib.pyplot as plt
 import pydotplus
-from sklearn.metrics import confusion_matrix, precision_score, recall_score, roc_auc_score, f1_score, classification_report, confusion_matrix
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, \
+    roc_auc_score, f1_score, classification_report, confusion_matrix
 from sklearn import tree
 
 

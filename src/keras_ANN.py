@@ -72,7 +72,7 @@ def keras_ann_model(x_train, y_train, epochs=1):
               batch_size=batch_size,
               epochs=epochs,
               verbose=1,
-              validation_split=0.3)
+              validation_split=1)
     return model
 
 
@@ -91,17 +91,20 @@ def main():
     data_train, data_test = helper.pre_processed_data_all(args, rand)
     label_train, label_test = helper.pre_processed_label_all(args, rand)
     res = []
-    for i in range(1, 2):
+    for i in range(10, 25):
         print('===\n=====Epochs: %d=====\n===' % i)
-        res.append(helper.run_function(keras_build_and_predict,
-                                       args.cross_validate,
-                                       data_train, label_train,
-                                       data_test, label_test,
-                                       epochs=i))
+        resa = []
+        for j in range(5):
+            resa.append(helper.run_function(keras_build_and_predict,
+                                            args.cross_validate,
+                                            data_train, label_train,
+                                            data_test, label_test,
+                                            epochs=i))
+        res.append(helper.mean_measures(helper.extract_measures(resa)))
     print(res)
     res = helper.extract_measures(res)
     print(res)
-    helper.plot_experiment('test', 'epochs', res)
+    helper.plot_experiment_server('research', 'epochs', res)
 
 
 if __name__ == '__main__':
