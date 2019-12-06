@@ -127,7 +127,7 @@ def j48_args():
     argp = parse_args('j48')
     argp.add_argument('-depth', dest='depth', default=15, type=int,
                       help='depth of the tree')
-    return argp.parse_args()
+    return argp
 
 
 def rForest_args():

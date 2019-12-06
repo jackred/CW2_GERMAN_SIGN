@@ -481,7 +481,7 @@ def plot_experiment(title, x_label, to_plot):
 
 def plot_experiment_server(title, x_label, to_plot):
     i = 0
-    plt.title(title)
+    #plt.title(title)
     plt.xlabel(x_label)
     plt.ylabel('%')
     for k in to_plot:
